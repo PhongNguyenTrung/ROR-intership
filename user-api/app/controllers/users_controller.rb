@@ -10,7 +10,6 @@ class UsersController < ApplicationController
 
   def create
     @user = User.create!(user_params)
-    render json: @user
   end
 
   def update
@@ -21,12 +20,7 @@ class UsersController < ApplicationController
   end
 
   def destroy
-    @user = User.find(params[:id])
-    if @user.destroy
-      render json: { message: 'Delete successfully!' }
-    else
-      error_response
-    end
+    @user = User.find(params[:id]).destroy
   end
 
   private
