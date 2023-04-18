@@ -1,2 +1,2 @@
-json.call(@users, :name, :address, :phong)
+json.call(@users, :id, :name, :address, :phone, :email)
 

@@ -4,5 +4,8 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   # root "articles#index"
   resources :users
-  # mount Base => '/'
+  post '/signup', to: 'users#signup'
+  post '/login', to: 'authentication#login'
+  get '/current_user', to: 'users#get_current_user'
+  # mount API::Base => '/'
 end

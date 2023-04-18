@@ -7,6 +7,11 @@
 #   Character.create(name: "Luke", movie: movies.first)
 require 'faker'
 
-10.times do |_n|
-  User.create!(name: Faker::Name.name, phong: Faker::PhoneNumber.cell_phone, address: Faker::Address.full_address)
+10.times do |n|
+  name = Faker::Name.name
+  email = "user-#{n + 1}@gmail.com"
+  phone = Faker::PhoneNumber.cell_phone
+  address =  Faker::Address.full_address
+  password = password_confirmation = 'password'
+  User.create!(name:, email:, phone:, address:, password:, password_confirmation:)
 end
