@@ -1,7 +1,7 @@
+# This controller handles for the user.
 class UsersController < ApplicationController
   before_action :find_user, only: %i[show update destroy]
-  before_action :authenticate_user, only: %i[get_current_user]
-
+  before_action :authenticate_user, only: %i[current_user update destroy]
   # POST /signup
   def signup
     @user = User.new(user_params)
@@ -11,7 +11,6 @@ class UsersController < ApplicationController
   # GET /users
   def index
     @users = User.all
-    render json: @users.as_json(only: %i[id name email phone address]), status: :ok
   end
 
   # GET /users/:id
@@ -24,20 +23,20 @@ class UsersController < ApplicationController
 
   # PUT /users/:id
   def update
+    error_message = { error: "You don't have permission to update this user" }
+    return render json: error_message, status: :unauthorized unless @current_user.id == @user.id
     return render json: { error: @user.errors.full_messages } unless @user.update(user_params)
-
-    render json: @user, status: :ok
   end
 
   # DELETE /users/:id
   def destroy
-    @user.destroy
+    error_message = { error: "You don't have permission to destroy this user" }
+    return render json: error_message, status: :unauthorized unless @current_user.id == @user.id
+    return render json: { error: @user.errors.full_messages } unless @user.destroy
   end
 
   # GET /current_user
-  def get_current_user
-    render json:  { user: @current_user.as_json( except: :password_digest)}, status: :ok
-  end
+  def current_user; end
 
   private
 
@@ -51,13 +50,11 @@ class UsersController < ApplicationController
 
   def authenticate_user
     header = request.headers['Authorization']
-    header = header.split(' ').last if header
+    header = header.split.last if header
     begin
       @decoded = jwt_decode(header)
       @current_user = User.find(@decoded[:user_id])
-    rescue ActiveRecord::RecordNotFound => e
-      render json: { errors: e.message }, status: :unauthorized
-    rescue JWT::DecodeError => e
+    rescue ActiveRecord::RecordNotFound, JWT::DecodeError => e
       render json: { errors: e.message }, status: :unauthorized
     end
   end

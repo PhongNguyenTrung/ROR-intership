@@ -6,6 +6,6 @@ Rails.application.routes.draw do
   resources :users
   post '/signup', to: 'users#signup'
   post '/login', to: 'authentication#login'
-  get '/current_user', to: 'users#get_current_user'
+  get '/current_user', to: 'users#current_user'
   # mount API::Base => '/'
 end

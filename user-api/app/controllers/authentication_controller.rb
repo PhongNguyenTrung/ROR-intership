@@ -1,3 +1,4 @@
+# This controller handles authentication for the application.
 class AuthenticationController < ApplicationController
   # POST /login
   def login
@@ -5,7 +6,7 @@ class AuthenticationController < ApplicationController
     if @user&.authenticate(params[:password])
       payload = { user_id: @user.id }
       token = jwt_encode(payload)
-      render json: { token: token }, status: :ok
+      render json: { token: }, status: :ok
     else
       render json: { error: 'unauthorized' }, status: :unauthorized
     end

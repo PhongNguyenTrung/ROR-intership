@@ -1,4 +1,6 @@
+# This modlue is responsible for
 module V1
+  # This modlue is responsible for User API
   class UserApi < Graph::API
     version 'v1', using: :path
 
