@@ -1,4 +1,2 @@
-json.message 'Created successfully'
-json.user do
-  json.partial! 'users/user', user: @user
-end
+json.message "Created successfully"
+json.user @user, :name, :address, :phong
