@@ -2,10 +2,10 @@
 
 one:
   name: MyString
-  phong: MyString
+  phone: MyString
   address: MyString
 
 two:
   name: MyString
-  phong: MyString
+  phone: MyString
   address: MyString

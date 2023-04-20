@@ -1,1 +1,1 @@
-json.message "Deleted successfully"
+json.message 'Deleted successfully'
