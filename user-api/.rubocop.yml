@@ -20,4 +20,3 @@ Style/FrozenStringLiteralComment:
 #Windowsの改行コードを変更 
 Layout/EndOfLine:
   EnforcedStyle: crlf
-  
