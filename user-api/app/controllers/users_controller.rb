@@ -5,7 +5,7 @@ class UsersController < ApplicationController
   # POST /signup
   def signup
     @user = User.new(user_params)
-    return render json: { error: @user.errors.full_messages }, status: :unauthorized unless @user.save
+    return render json: { error: @user.errors.full_messages }, status: :bad_request unless @user.save
   end
 
   # GET /users
@@ -24,14 +24,14 @@ class UsersController < ApplicationController
   # PUT /users/:id
   def update
     error_message = { error: "You don't have permission to update this user" }
-    return render json: error_message, status: :unauthorized unless @current_user.id == @user.id
-    return render json: { error: @user.errors.full_messages } unless @user.update(user_params)
+    return render json: error_message, status: :forbidden unless @current_user.id == @user.id
+    return render json: { error: @user.errors.full_messages } unless @user.update(update_params)
   end
 
   # DELETE /users/:id
   def destroy
     error_message = { error: "You don't have permission to destroy this user" }
-    return render json: error_message, status: :unauthorized unless @current_user.id == @user.id
+    return render json: error_message, status: :forbidden unless @current_user.id == @user.id
     return render json: { error: @user.errors.full_messages } unless @user.destroy
   end
 
@@ -42,6 +42,10 @@ class UsersController < ApplicationController
 
   def user_params
     params.permit(:name, :phone, :address, :email, :password, :password_confirmation)
+  end
+
+  def update_params
+    params.permit(:name, :phone, :address, :email)
   end
 
   def find_user
