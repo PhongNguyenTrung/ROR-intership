@@ -8,8 +8,8 @@ module V1
         header = request.headers['Authorization']
         header = header.split.last if header
         begin
-          @decoded = jwt_decode(header)
-          @current_user = User.find(@decoded[:user_id])
+          decoded = jwt_decode(header)
+          @current_user = User.find(decoded[:user_id])
         rescue ActiveRecord::RecordNotFound, JWT::DecodeError
           error!('401 Unauthorized', 401)
         end
@@ -19,13 +19,20 @@ module V1
     version 'v1', using: :path
 
     resources :users do
-      desc 'Get all users'
+      desc 'Get all users', {
+        is_array: true,
+        success: Entities::V1::UserFormat,
+        failure: [{ code: 401, message: 'Unauthorized' }]
+      }
       get do
-        @users = User.all
-        present @users, with: Entities::V1::UserFormat
+        users = User.all
+        present users, with: Entities::V1::UserFormat
       end
 
-      desc 'Get user with bearer token'
+      desc 'Get user with bearer token', {
+        success: Entities::V1::UserFormat,
+        failure: [{ code: 401, message: 'Unauthorized' }]
+      }
       before do
         authenticate_user
       end
@@ -34,14 +41,19 @@ module V1
       end
     end
 
-    desc 'Sign up user'
+    desc 'Sign up user', {
+      success: Entities::V1::UserFormat,
+      failure: [{ code: 400, message: 'Bad request' }]
+    }
     params do
-      requires :name, type: String, allow_blank: false
-      optional :phone, type: String, allow_blank: false
-      optional :address, type: String, allow_blank: false
-      requires :email, type: String, allow_blank: false, regexp: URI::MailTo::EMAIL_REGEXP
-      requires :password, type: String, allow_blank: false
-      requires :password_confirmation, type: String, allow_blank: false, same_as: :password
+      requires :name, type: String, allow_blank: false, documentation: { param_type: 'body' }
+      optional :phone, type: String, allow_blank: false, documentation: { param_type: 'body' }
+      optional :address, type: String, allow_blank: false, documentation: { param_type: 'body' }
+      requires :email, type: String, allow_blank: false, regexp: URI::MailTo::EMAIL_REGEXP, \
+        documentation: { param_type: 'body' }
+      requires :password, type: String, allow_blank: false, documentation: { param_type: 'body' }
+      requires :password_confirmation, type: String, allow_blank: false, same_as: :password, \
+        documentation: { param_type: 'body' }
     end
     post '/signup' do
       user = User.new(params)
@@ -49,10 +61,14 @@ module V1
       present user, with: Entities::V1::UserFormat
     end
 
-    desc 'Login User'
+    desc 'Login User', {
+      success: Entities::V1::Token,
+      failure: [{ code: 401, message: 'Unauthorized' }]
+    }
     params do
-      requires :email, type: String, allow_blank: false, regexp: URI::MailTo::EMAIL_REGEXP
-      requires :password, type: String, allow_blank: false
+      requires :email, type: String, allow_blank: false, regexp: URI::MailTo::EMAIL_REGEXP, \
+        documentation: { param_type: 'body' }
+      requires :password, type: String, allow_blank: false, documentation: { param_type: 'body' }
     end
     post '/login' do
       user = User.find_by(email: params[:email].downcase)
