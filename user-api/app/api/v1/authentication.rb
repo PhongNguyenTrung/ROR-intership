@@ -9,18 +9,20 @@ module V1
       failure: [{ code: 400, message: 'Bad request' }]
     }
     params do
-      requires :name, type: String, allow_blank: false, documentation: { param_type: 'body' }
-      optional :phone, type: String, allow_blank: false, documentation: { param_type: 'body' }
-      optional :address, type: String, allow_blank: false, documentation: { param_type: 'body' }
-      requires :email, type: String, allow_blank: false, regexp: URI::MailTo::EMAIL_REGEXP, documentation: {
-        param_type: 'body'
-      }
-      requires :password, type: String, allow_blank: false, documentation: {
-        param_type: 'body'
-      }
-      requires :password_confirmation, type: String, allow_blank: false, same_as: :password, documentation: {
-        param_type: 'body'
-      }
+      with(type: String, allow_blank: false, documentation: { param_type: 'body' }) do
+        requires :name,
+        values: { value: ->(v) { v.length.between?(3, 50) }, message: 'must contains 3-50 characters' }
+        optional :phone
+        optional :address
+        requires :email,
+                 regexp: URI::MailTo::EMAIL_REGEXP,
+                 values: {
+                   value: ->(v) { v.length <= 255 },
+                   message: 'contains maximum 255 characters'
+                 }
+        requires :password
+        requires :password_confirmation, same_as: :password
+      end
     end
     post '/signup' do
       user = User.create!(params)
@@ -32,10 +34,10 @@ module V1
       failure: [{ code: 401, message: 'Unauthorized' }]
     }
     params do
-      requires :email, type: String, allow_blank: false, regexp: URI::MailTo::EMAIL_REGEXP, documentation: {
-        param_type: 'body'
-      }
-      requires :password, type: String, allow_blank: false, documentation: { param_type: 'body' }
+      with(type: String, allow_blank: false, documentation: { param_type: 'body' }) do
+        requires :email, regexp: URI::MailTo::EMAIL_REGEXP
+        requires :password
+      end
     end
     post '/login' do
       user = User.find_by(email: params[:email].downcase)
