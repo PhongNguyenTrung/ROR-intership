@@ -8,7 +8,6 @@ module V1
       desc 'Get all users', {
         is_array: true,
         success: Entities::V1::UserFormat,
-        failure: [{ code: 401, message: 'Unauthorized' }]
       }
       get do
         users = User.all

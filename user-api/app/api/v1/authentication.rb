@@ -23,8 +23,6 @@ module V1
       }
     end
     post '/signup' do
-      # user = User.new(params)
-      # error!("400 Bad_Request: #{user.errors.full_messages.join(',')}", 400) unless user.save
       user = User.create!(params)
       present user, with: Entities::V1::UserFormat
     end
