@@ -7,7 +7,7 @@ module V1
     resources :users do
       desc 'Get all users', {
         is_array: true,
-        success: Entities::V1::UserFormat,
+        success: Entities::V1::UserFormat
       }
       get do
         users = User.all
