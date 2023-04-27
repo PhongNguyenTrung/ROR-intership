@@ -2,8 +2,10 @@
 class Base < Grape::API
   format :json
   prefix :api
+  version 'v1', using: :path
 
-  mount V1::UserApi
+  mount V1::Users
+  mount V1::Authentication
 
   before do
     header['Access-Control-Allow-Origin'] = '*'

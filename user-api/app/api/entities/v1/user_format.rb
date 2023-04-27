@@ -7,9 +7,5 @@ module Entities
       expose :phone
       expose :address
     end
-
-    class Token < Grape::Entity
-      expose :token
-    end
   end
 end
