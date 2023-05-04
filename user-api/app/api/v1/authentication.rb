@@ -26,6 +26,10 @@ module V1
     end
     post '/signup' do
       user = User.create!(params)
+      payload = { user_id: user.id }
+      activation_digest = jwt_encode(payload)
+      user.update!({activation_digest: activation_digest, activated_at: Time.zone.now})
+      user.send_activation_email
       present user, with: Entities::V1::UserFormat
     end
 

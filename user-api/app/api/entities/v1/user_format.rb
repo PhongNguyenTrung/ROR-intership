@@ -6,6 +6,10 @@ module Entities
       expose :name
       expose :phone
       expose :address
+      expose :activated
+      expose :activated_at
+      expose :activation_digest
+      expose :email
     end
   end
 end
