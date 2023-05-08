@@ -1,3 +1,5 @@
 Hi <%= @user.name %>,
 Welcome to the Sample App! Click on the link below to activate your account:
 <%= @activation_url %>
+This link will expire in two hours. So if your link is expired, please click the below link:
+<%= @resend_activation_url %>

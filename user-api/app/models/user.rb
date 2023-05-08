@@ -6,22 +6,25 @@ class User < ApplicationRecord
   validates :email, presence: true, uniqueness: true, length: { maximum: 255 },
                     format: { with: URI::MailTo::EMAIL_REGEXP }
   has_secure_password
-  has_secure_token
   validates :password, presence: true, length: { minimum: 6 }, allow_nil: true
 
   # Activates an account
   def activate!
-    update_columns!(activated: true, activated_at: Time.zone.now)
+    update!({ activated: true, activated_at: Time.zone.now })
+  end
+
+  # Check account activation
+  def activate?
+    activated
+  end
+
+  def activate_account_expired?
+    activated_at < 2.hours.ago
   end
 
   # Sends activation email
   def send_activation_email
     UserMailer.account_activation(self).deliver_now
-  end
-
-  # Check account activation
-  def account_activate?
-    
   end
 
   # Sends reset password email
@@ -32,6 +35,4 @@ class User < ApplicationRecord
   def reset_password_expired?
     reset_sent_at < 2.hours.ago
   end
-  private 
-
 end

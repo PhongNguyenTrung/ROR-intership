@@ -31,3 +31,5 @@
 
 en:
   hello: "Hello world"
+  reset_password: "Password Reset"
+  account_activation: "Account Activation"
