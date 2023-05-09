@@ -26,7 +26,7 @@ module V1
       end
       get '/reset_password_page' do
         user = User.find_by(reset_digest: params[:reset_digest])
-        error!('Not found User! This link is not available now!', 400) unless user
+        error!('Not found User! This link is not available now!', 404) unless user
         error!('Password reset has expired! Resent Forget Password Email!', 410) if user.reset_password_expired?
       end
 
@@ -40,7 +40,7 @@ module V1
       end
       put '/reset_password' do
         user = User.find_by(reset_digest: params[:reset_digest])
-        error!('Not found User! This link is not available now!', 400) unless user
+        error!('Not found User! This link is not available now!', 404) unless user
         error!('Password reset has expired! Resent Forget Password Email!', 410) if user.reset_password_expired?
         user.update!({ reset_digest: nil, reset_sent_at: nil, password: params[:password],
                        password_confirmation: params[:password_confirmation] })
