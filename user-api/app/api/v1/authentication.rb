@@ -4,6 +4,10 @@ module V1
   class Authentication < Grape::API
     helpers JwtToken
 
+    rescue_from :all do |e|
+      error!({ error: e.class, message: e.message }, e.code)
+    end
+
     desc 'Sign up user', {
       success: Entities::V1::UserFormat,
       failure: [{ code: 400, message: 'Bad request' }]
@@ -26,8 +30,7 @@ module V1
     end
     post '/signup' do
       user = User.create!(params)
-      user.update!({ activation_digest: User.generate_unique_secure_token, activated_at: Time.zone.now })
-      user.send_activation_email
+      ActivationEmailSenderService.call(user)
       present user, with: Entities::V1::UserFormat
     end
 

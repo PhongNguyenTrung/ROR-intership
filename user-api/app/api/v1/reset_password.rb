@@ -2,6 +2,10 @@
 module V1
   # This class is responsible for Authentication API with version 1.
   class ResetPassword < Grape::API
+    rescue_from :all do |e|
+      error!({ error: e.class, message: e.message }, e.code)
+    end
+
     resources :users do
       desc 'Send reset password email', {
         success: [{ code: 200, message: 'Send reset password email successfully' }],
@@ -13,10 +17,7 @@ module V1
       end
       get '/send_reset_password_email' do
         user = User.find_by(email: params[:email])
-        error!('Not found User with email address', 404) unless user
-        error!('Account has not activated', 403) unless user.activate?
-        user.update!({ reset_digest: User.generate_unique_secure_token, reset_sent_at: Time.zone.now })
-        user.send_reset_password_email
+        ResetPasswordEmailSenderService.call(user)
       end
 
       desc 'Reset password page'
