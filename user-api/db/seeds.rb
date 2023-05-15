@@ -13,5 +13,6 @@ require 'faker'
   phone = Faker::PhoneNumber.cell_phone
   address =  Faker::Address.full_address
   password = password_confirmation = 'password'
-  User.create!(name:, email:, phone:, address:, password:, password_confirmation:)
+  User.create!(name:, email:, phone:, address:, password:, password_confirmation:,
+    activated: true, activated_at: Time.zone.now)
 end

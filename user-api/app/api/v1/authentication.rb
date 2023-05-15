@@ -11,7 +11,7 @@ module V1
     params do
       with(type: String, allow_blank: false, documentation: { param_type: 'body' }) do
         requires :name,
-        values: { value: ->(v) { v.length.between?(3, 50) }, message: 'must contains 3-50 characters' }
+                 values: { value: ->(v) { v.length.between?(3, 50) }, message: 'must contains 3-50 characters' }
         optional :phone
         optional :address
         requires :email,
@@ -26,12 +26,13 @@ module V1
     end
     post '/signup' do
       user = User.create!(params)
+      ActivationEmailSenderService.call(user)
       present user, with: Entities::V1::UserFormat
     end
 
     desc 'Login User', {
       success: Entities::V1::Token,
-      failure: [{ code: 401, message: 'Unauthorized' }]
+      failure: [{ code: 401, message: 'Unauthorized' }, { code: 403, message: 'Account has not activated' }]
     }
     params do
       with(type: String, allow_blank: false, documentation: { param_type: 'body' }) do
@@ -41,6 +42,7 @@ module V1
     end
     post '/login' do
       user = User.find_by(email: params[:email].downcase)
+      error!('Account has not activated', 403) unless user.activate?
       if user&.authenticate(params[:password])
         payload = { user_id: user.id }
         token = jwt_encode(payload)

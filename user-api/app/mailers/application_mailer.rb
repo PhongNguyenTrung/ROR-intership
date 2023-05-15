@@ -1,4 +1,5 @@
+# This class is responsible for defining the Mailer interface
 class ApplicationMailer < ActionMailer::Base
-  default from: 'from@example.com'
+  default from: 'noreply@example.com'
   layout 'mailer'
 end

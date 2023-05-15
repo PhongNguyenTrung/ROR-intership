@@ -2,10 +2,10 @@
 class Base < Grape::API
   format :json
   prefix :api
-  version 'v1', using: :path
-
-  mount V1::Users
-  mount V1::Authentication
+  rescue_from :all do |e|
+    error!({ error: e.class, message: e.message }, e.code)
+  end
+  mount V1::V1Base
 
   before do
     header['Access-Control-Allow-Origin'] = '*'

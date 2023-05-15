@@ -1,0 +1,9 @@
+<h1>User#account_activation</h1>
+
+<p>Hi <%= @user.name %>,</p>
+<p>
+Welcome to the Sample App! Click on the link below to activate your account:
+</p>
+<%= link_to "Activate my account!", @activation_url %>
+<p>This link will expire in two hours. So if your link is expired, please click the below link:</p>
+<%= link_to "Resend activation account request", @resend_activation_url %>
