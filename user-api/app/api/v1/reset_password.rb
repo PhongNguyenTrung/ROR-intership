@@ -2,10 +2,6 @@
 module V1
   # This class is responsible for Authentication API with version 1.
   class ResetPassword < Grape::API
-    rescue_from :all do |e|
-      error!({ error: e.class, message: e.message }, e.code)
-    end
-
     resources :users do
       desc 'Send reset password email', {
         success: [{ code: 200, message: 'Send reset password email successfully' }],

@@ -4,10 +4,6 @@ module V1
   class Authentication < Grape::API
     helpers JwtToken
 
-    rescue_from :all do |e|
-      error!({ error: e.class, message: e.message }, e.code)
-    end
-
     desc 'Sign up user', {
       success: Entities::V1::UserFormat,
       failure: [{ code: 400, message: 'Bad request' }]

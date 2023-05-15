@@ -1,3 +1,3 @@
-# This class is responsible 400 error
+# This class is responsible 404 error
 class NotFoundError < ApplicationError
 end

@@ -2,9 +2,6 @@
 module V1
   # This class is responsible for Account Activation API with version 1.
   class AccountActivation < Grape::API
-    rescue_from :all do |e|
-      error!({ error: e.class, message: e.message }, e.code)
-    end
     resources :users do
       desc 'Send activation account email', {
         success: [{ code: 200, message: 'Send activation account email successfully' }],
